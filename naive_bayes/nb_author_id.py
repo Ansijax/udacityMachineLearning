@@ -28,7 +28,6 @@ clf = GaussianNB()
 clf.fit(features_train,labels_train)
 t1 =time()
 print "fit time {}".format(round(t1-t0,3))
-t1=time()
 clf.predict(features_train)
 t2 = time()
 print "predict time {}".format(round(t2-t1,3))
@@ -38,10 +37,6 @@ t3=time()
 print "score time {}".format(round(t3-t2),3)
 
 
-#########################################################
-### your code goes here ###
 
-
-#########################################################
 
 

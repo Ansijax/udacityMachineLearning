@@ -15,10 +15,9 @@ def outlierCleaner(predictions, ages, net_worths):
     data=[]    
     
     for pred,age, net  in zip(predictions, ages, net_worths):
-        data.append((age, net, pred - net))
+        data.append((age, net, pred - net)) #error = pred-net 
 
-
-    sorted_data= sorted(data, key=lambda tup:tup[2])
+    sorted_data= sorted(data, key=lambda tup:tup[2]) #sort by error
     new_data_len = int(round(data_len*0.9))
 
     cleaned_data = sorted_data[:new_data_len]

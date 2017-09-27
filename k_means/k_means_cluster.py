@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
-
-
+from sklearn.cluster import KMeans
+from math import isnan
 
 
 def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature 1", f2_name="feature 2"):
@@ -48,8 +48,9 @@ data_dict.pop("TOTAL", 0)
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
-features_list = [poi, feature_1, feature_2]
+features_list = [poi, feature_1, feature_2 , feature_3]
 data = featureFormat(data_dict, features_list )
 poi, finance_features = targetFeatureSplit( data )
 
@@ -58,19 +59,46 @@ poi, finance_features = targetFeatureSplit( data )
 ### you'll want to change this line to 
 ### for f1, f2, _ in finance_features:
 ### (as it's currently written, the line below assumes 2 features)
-for f1, f2 in finance_features:
+for f1, f2, _ in finance_features:
     plt.scatter( f1, f2 )
 plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
 
+maximum_stock_option = 0
+minimum_stock_option = 99999999999999
 
+maximum_salary = 0
+minimum_salary = 99999999999999
+for key in data_dict:
+    value_stock_option =  data_dict[key][feature_2]
+    value_salary =  data_dict[key][feature_1]
+
+    if value_stock_option < minimum_stock_option and not isnan(float(value_stock_option)):
+        minimum_stock_option= value_stock_option
+    
+    if value_stock_option > maximum_stock_option and not isnan(float(value_stock_option)):
+        maximum_stock_option= value_stock_option
+
+    if value_salary < minimum_salary and not isnan(float(value_salary)):
+        minimum_salary= value_salary
+    
+    if value_salary > maximum_salary and not isnan(float(value_salary)):
+        maximum_salary= value_salary
+
+
+print "min value in feature {} is : {} max value in feature {} is : {}" .format(feature_2, minimum_stock_option, feature_2 , maximum_stock_option)
+
+print "min value in feature {} is : {} max value in feature {} is : {}" .format(feature_1, minimum_salary, feature_1 , maximum_salary)
+
+KMeans_model = KMeans(n_clusters=2, random_state=1).fit(finance_features)
+pred = KMeans_model.labels_
 
 
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
 try:
-    Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
+    Draw(pred, finance_features, poi, mark_poi=False, name="clusters_3_feature.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"

@@ -4,6 +4,8 @@ import os
 import pickle
 import re
 import sys
+from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 sys.path.append( "../tools/" )
 from parse_out_email_text import parseOutText
@@ -36,29 +38,48 @@ word_data = []
 ### can iterate your modifications quicker
 temp_counter = 0
 
+#stopwords.words("english")
+signature_words =["sara","shackleton","chris","germani"]
 
 for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
     for path in from_person:
         ### only look at first 200 emails when developing
         ### once everything is working, remove this line to run over full dataset
-        temp_counter += 1
+        #temp_counter += 1
         if temp_counter < 200:
             path = os.path.join('..', path[:-1])
             print path
             email = open(path, "r")
 
             ### use parseOutText to extract the text from the opened email
-
+            stemmed_text = parseOutText(email)
+            
+            for word in signature_words:
+                stemmed_text=stemmed_text.replace(word,"")
+            
+            
             ### use str.replace() to remove any instances of the words
             ### ["sara", "shackleton", "chris", "germani"]
-
+            word_data.append(stemmed_text)
             ### append the text to word_data
-
+            if name =="sara":
+                from_data.append(0)
+            elif name =="chris":
+                from_data.append(1)
             ### append a 0 to from_data if email is from Sara, and 1 if email is from Chris
 
 
             email.close()
 
+print "string for word_data[152] is :{}".format(word_data[152])
+
+
+vect = TfidfVectorizer(stop_words="english")
+result = vect.fit_transform(word_data)
+print "the number of word in the TFIDF dict is: {}".format(len(vect.get_feature_names()))
+print len(vect.get_stop_words())
+
+print "the word for number 34597 is {}".format(vect.get_feature_names()[34597])
 print "emails processed"
 from_sara.close()
 from_chris.close()

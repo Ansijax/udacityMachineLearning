@@ -15,7 +15,9 @@ sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 from sklearn.cluster import KMeans
 from math import isnan
+from sklearn import preprocessing
 
+numpy.set_printoptions(suppress=True)
 
 def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature 1", f2_name="feature 2"):
     """ some plotting code designed to help you visualize your clusters """
@@ -43,7 +45,6 @@ data_dict = pickle.load( open("../final_project/final_project_dataset.pkl", "r")
 ### there's an outlier--remove it! 
 data_dict.pop("TOTAL", 0)
 
-
 ### the input features we want to use 
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
@@ -52,6 +53,10 @@ feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2 , feature_3]
 data = featureFormat(data_dict, features_list )
+scaler = preprocessing.MinMaxScaler()
+data = scaler.fit_transform(data)
+
+
 poi, finance_features = targetFeatureSplit( data )
 
 
@@ -92,6 +97,8 @@ print "min value in feature {} is : {} max value in feature {} is : {}" .format(
 
 print "min value in feature {} is : {} max value in feature {} is : {}" .format(feature_1, minimum_salary, feature_1 , maximum_salary)
 
+scaled_data=scaler.transform([0.,200000.,1000000.,0])
+print "rescaled value for $200000 is {} while for 1M is {} ".format(scaled_data[1],scaled_data[2])
 KMeans_model = KMeans(n_clusters=2, random_state=1).fit(finance_features)
 pred = KMeans_model.labels_
 
@@ -99,6 +106,6 @@ pred = KMeans_model.labels_
 ### rename the "name" parameter when you change the number of features
 ### so that the figure gets saved to a different file
 try:
-    Draw(pred, finance_features, poi, mark_poi=False, name="clusters_3_feature.pdf", f1_name=feature_1, f2_name=feature_2)
+    Draw(pred, finance_features, poi, mark_poi=False, name="clusters_3_feature_scaled.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"

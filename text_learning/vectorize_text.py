@@ -25,8 +25,8 @@ from parse_out_email_text import parseOutText
 """
 
 
-from_sara  = open("from_sara.txt", "r")
-from_chris = open("from_chris.txt", "r")
+from_sara  = open("./from_sara.txt", "r")
+from_chris = open("./from_chris.txt", "r")
 
 from_data = []
 word_data = []
@@ -39,7 +39,7 @@ word_data = []
 temp_counter = 0
 
 #stopwords.words("english")
-signature_words =["sara","shackleton","chris","germani"]
+signature_words =["sara","shackleton","chris","germani","sshacklensf","cgermannsf"]
 
 for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
     for path in from_person:

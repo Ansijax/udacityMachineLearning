@@ -26,7 +26,7 @@ def preprocess(words_file = "../tools/word_data.pkl", authors_file="../tools/ema
             -- training/testing labels
 
     """
-
+    print "hello"
     ### the words (features) and authors (labels), already largely preprocessed
     ### this preprocessing will be repeated in the text learning mini-project
     authors_file_handler = open(authors_file, "r")

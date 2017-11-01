@@ -19,7 +19,7 @@ authors = pickle.load( open(authors_file, "r") )
 ### remainder go into training)
 ### feature matrices changed to dense representations for compatibility with
 ### classifier functions in versions 0.15.2 and earlier
-from sklearn import cross_validation
+from sklearn import cross_validation, tree
 features_train, features_test, labels_train, labels_test = cross_validation.train_test_split(word_data, authors, test_size=0.1, random_state=42)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -34,10 +34,15 @@ features_test  = vectorizer.transform(features_test).toarray()
 ### train on only 150 events to put ourselves in this regime
 features_train = features_train[:150].toarray()
 labels_train   = labels_train[:150]
-
-
-
+clf= tree.DecisionTreeClassifier()
+clf= clf.fit(features_train,labels_train)
+#	print "the accuracy on train is : {}".format(clf.score(features_train,labels_train))
+print "the accuracy test is : {}".format(clf.score(features_test,labels_test))
 ### your code goes here
-
+for elem in clf.feature_importances_:
+	if elem > 0.2:
+		feature_index=numpy.where(clf.feature_importances_==elem)
+		index=feature_index[0][0]
+		print "important feature  is {} at index {} with value {}".format(vectorizer.get_feature_names()[index], feature_index,elem)
 
 
